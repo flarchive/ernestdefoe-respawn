@@ -1,0 +1,1051 @@
+// =============================================================================
+// Respawn — gaming theme for Flarum 2 (forum frontend)
+// =============================================================================
+
+// ---- Design tokens ----------------------------------------------------------
+// Two sets — dark is the default; light kicks in under [data-theme^="light"]
+// which the JS extender sets on <html> based on the admin's mode setting.
+
+:root,
+[data-theme^="dark"] {
+  --r-bg:          #0b0f14;
+  --r-surface:     #131923;
+  --r-surface-2:   #1a2230;
+  --r-line:        #243043;
+  --r-text:        #e5edf7;
+  --r-muted:       #8ea0bb;
+  --r-accent:      #2af0ff;
+  --r-accent-soft: rgba(42, 240, 255, 0.2);
+  --r-magenta:     #ff3da8;
+  --r-gold:        #ffc658;
+  --r-epic:        #c46bff;
+  --r-rare:        #2af0ff;
+  --r-common:      #5b6c85;
+  --r-header-bg:   linear-gradient(180deg, #101824 0%, #0b0f14 100%);
+  --r-scanline:    rgba(255, 255, 255, 0.025);
+  --r-scanline-2:  rgba(255, 255, 255, 0.015);
+  --r-avatar-fg:   #0b0f14;
+  --r-btn-fg:      #061319;
+}
+
+[data-theme^="light"] {
+  --r-bg:          #f3f5f9;
+  --r-surface:     #ffffff;
+  --r-surface-2:   #eef1f6;
+  --r-line:        #d6deea;
+  --r-text:        #0c1422;
+  --r-muted:       #5a6b85;
+  --r-accent:      #0089ff;
+  --r-accent-soft: rgba(0, 137, 255, 0.16);
+  --r-magenta:     #d6168a;
+  --r-gold:        #c98800;
+  --r-epic:        #8a3ddc;
+  --r-rare:        #0089ff;
+  --r-common:      #8090a8;
+  --r-header-bg:   linear-gradient(180deg, #ffffff 0%, #f3f5f9 100%);
+  --r-scanline:    rgba(0, 20, 60, 0.025);
+  --r-scanline-2:  rgba(0, 20, 60, 0.015);
+  --r-avatar-fg:   #ffffff;
+  --r-btn-fg:      #ffffff;
+}
+
+// ---- Override Flarum core tokens -------------------------------------------
+// Flarum 2 exposes a small set of CSS vars; map ours onto them so every
+// component that already uses them re-skins for free.
+
+:root {
+  --body-bg:           var(--r-bg);
+  --text-color:        var(--r-text);
+  --primary-color:     var(--r-accent);
+  --secondary-color:   var(--r-magenta);
+  --header-bg:         var(--r-bg);
+  --header-color:      var(--r-text);
+  --control-bg:        var(--r-surface);
+  --control-color:     var(--r-text);
+  --muted-color:       var(--r-muted);
+  --muted-more-color:  var(--r-line);
+  --shadow-color:      rgba(0, 0, 0, 0.4);
+}
+
+// =============================================================================
+// Body + typography
+// =============================================================================
+html {
+  background: var(--r-bg);
+}
+
+body {
+  background:
+    radial-gradient(1200px 800px at 80% -10%, var(--r-surface-2) 0%, var(--r-bg) 60%) fixed;
+  color: var(--r-text);
+  transition: background-color .2s, color .2s;
+}
+
+// Mono for code-y/UI accents we add — leave body copy alone
+.respawn-mono,
+.Respawn-mono {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.04em;
+}
+
+// =============================================================================
+// Header
+// =============================================================================
+.App-header {
+  background: var(--r-header-bg) !important;
+  border-bottom: 1px solid var(--r-line);
+  position: relative;
+  // Intentionally NOT `overflow: hidden` — that clips the user-menu
+  // dropdown when it opens below the header. The scanline ::after is
+  // already bounded by its `inset: 0`.
+
+  &::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(180deg, transparent 0 2px, var(--r-scanline) 2px 3px);
+    pointer-events: none;
+  }
+
+  .item-logo,
+  .item-title,
+  .Header-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--r-text);
+    text-shadow: 0 0 12px var(--r-accent-soft);
+  }
+}
+
+// =============================================================================
+// Buttons
+// =============================================================================
+.Button {
+  border: 1px solid var(--r-line);
+  background: var(--r-surface);
+  color: var(--r-text);
+  font-weight: 600;
+  transition: border-color .15s, box-shadow .15s, color .15s;
+  border-radius: 0;
+
+  &:hover {
+    border-color: var(--r-accent);
+    color: var(--r-accent);
+    box-shadow: 0 0 0 1px var(--r-accent-soft), 0 0 16px -4px var(--r-accent);
+    background: var(--r-surface);
+  }
+}
+
+.Button--primary {
+  background: linear-gradient(135deg, var(--r-accent) 0%, color-mix(in oklab, var(--r-accent) 70%, #000) 100%);
+  color: var(--r-btn-fg) !important;
+  border: none;
+  box-shadow: 0 0 0 1px var(--r-accent), 0 0 24px -6px var(--r-accent);
+
+  &:hover {
+    background: linear-gradient(135deg, var(--r-accent) 0%, color-mix(in oklab, var(--r-accent) 80%, #000) 100%);
+    color: var(--r-btn-fg) !important;
+    box-shadow: 0 0 0 1px var(--r-accent), 0 0 32px -4px var(--r-accent);
+    transform: translateY(-1px);
+  }
+}
+
+// =============================================================================
+// Discussion list — the main forum surface
+// =============================================================================
+.DiscussionListItem {
+  // `position: relative` so the z-index raise below applies. The hover
+  // `transform` already creates a stacking context, which is what trapped the
+  // item's dropdown beneath later list items — raising the active item's
+  // z-index above its siblings lets the open menu paint over them. (#2)
+  position: relative;
+  background: var(--r-surface);
+  border: 1px solid var(--r-line);
+  margin-bottom: 12px;
+  transition: border-color .15s, box-shadow .15s, transform .15s;
+
+  &:hover {
+    border-color: var(--r-accent);
+    box-shadow: 0 0 0 1px var(--r-accent-soft), 0 0 28px -10px var(--r-accent);
+    transform: translateY(-1px);
+    z-index: 5;
+  }
+
+  // Keep the item (and its open dropdown) above lower items the whole time the
+  // menu is open — `:focus-within` holds even after the cursor moves into the
+  // menu or the row is no longer hovered.
+  &:focus-within {
+    z-index: 5;
+  }
+
+  .DiscussionListItem-content {
+    padding: 14px 18px;
+  }
+
+  .DiscussionListItem-title {
+    font-weight: 600;
+    color: var(--r-text);
+  }
+
+  .DiscussionListItem-info {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--r-muted);
+    letter-spacing: 0.04em;
+  }
+
+  .DiscussionListItem-count {
+    background: var(--r-surface-2);
+    color: var(--r-text);
+    border: 1px solid var(--r-line);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    border-radius: 0;
+  }
+}
+
+// =============================================================================
+// Tag tiles → rarity tiles
+// =============================================================================
+.TagTile,
+.DiscussionListItem .item-terminalPost,
+.tag {
+  border-radius: 0 !important;
+}
+
+.TagLabel,
+.tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid currentColor;
+  background: transparent !important;
+  padding: 2px 8px;
+  border-radius: 0 !important;
+
+  // We strip the tag's filled background above, so the contrast text colour
+  // flarum/tags computes for that background (--tag-color) is unreadable on the
+  // dark surface — and its inner `.TagLabel-text { color: var(--tag-color)
+  // !important }` beats any plain `color` override. So drive the outline AND
+  // text from the tag's own colour by overriding the --tag-color custom prop
+  // (it inherits into .TagLabel-text, so it wins the !important).
+  color: var(--r-muted);
+  --tag-color: var(--r-muted);
+
+  &.colored,
+  &--colored {
+    color: var(--tag-bg);          // border (currentColor) = the tag's own colour
+    --tag-color: var(--tag-bg);    // .TagLabel-text picks this up too
+  }
+
+  &::before { content: '◢ '; }
+  &::after  { content: ' ◣'; }
+}
+
+// =============================================================================
+// Hero — replaces the default IndexPage hero
+// =============================================================================
+.RespawnHero {
+  position: relative;
+  background:
+    radial-gradient(700px 220px at 90% -10%, var(--r-accent-soft), transparent 60%),
+    radial-gradient(500px 200px at 10% 110%, color-mix(in oklab, var(--r-magenta) 20%, transparent), transparent 60%),
+    linear-gradient(135deg, var(--r-surface) 0%, var(--r-surface-2) 100%);
+  border: 1px solid var(--r-line);
+  padding: 36px 36px 32px;
+  overflow: hidden;
+  margin-bottom: 24px;
+
+  &::before {
+    content: '';
+    position: absolute; top: 0; right: 0;
+    width: 28px; height: 28px;
+    background: var(--r-bg);
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+    border-left: 1px solid var(--r-line);
+    border-bottom: 1px solid var(--r-line);
+  }
+
+  &::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(180deg, transparent 0 3px, var(--r-scanline-2) 3px 4px);
+    pointer-events: none;
+  }
+
+  &-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--r-accent);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    &::after {
+      content: '';
+      flex: 0 0 80px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--r-accent), transparent);
+    }
+  }
+
+  &-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 0 0 12px;
+    letter-spacing: -0.01em;
+    color: var(--r-text);
+
+    .accent {
+      color: var(--r-accent);
+      text-shadow: 0 0 20px var(--r-accent-soft);
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 28px;
+      background: var(--r-accent);
+      vertical-align: -4px;
+      margin-left: 4px;
+      animation: respawn-blink 1s steps(2) infinite;
+      box-shadow: 0 0 12px var(--r-accent);
+    }
+  }
+
+  &-tagline {
+    color: var(--r-muted);
+    font-size: 15px;
+    max-width: 640px;
+    margin: 0 0 22px;
+  }
+
+  &-chips {
+    margin-top: 18px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+
+  &-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border: 1px solid var(--r-line);
+    background: var(--r-bg);
+    color: var(--r-muted);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .15s;
+
+    &:hover {
+      color: var(--r-accent);
+      border-color: var(--r-accent);
+      box-shadow: 0 0 12px -4px var(--r-accent);
+      text-decoration: none;
+    }
+
+    .glyph {
+      color: var(--r-accent);
+      margin-right: 6px;
+    }
+  }
+}
+
+@keyframes respawn-blink {
+  50% { opacity: 0; }
+}
+
+// =============================================================================
+// Stats footer
+// =============================================================================
+.RespawnStats {
+  margin: 40px 0 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--r-line);
+
+  &-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--r-muted);
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .arrow { color: var(--r-accent); }
+
+    &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--r-line), transparent);
+    }
+  }
+
+  &-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+
+    @media (max-width: 720px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  &-card {
+    background: linear-gradient(180deg, var(--r-surface) 0%, var(--r-surface-2) 100%);
+    border: 1px solid var(--r-line);
+    padding: 18px 18px 16px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .15s, box-shadow .15s;
+
+    &:hover {
+      border-color: var(--r-accent);
+      box-shadow: 0 0 0 1px var(--r-accent-soft), 0 0 24px -8px var(--r-accent);
+    }
+
+    &::before {
+      content: '';
+      position: absolute; top: 0; right: 0;
+      width: 16px; height: 16px;
+      background: var(--r-bg);
+      clip-path: polygon(100% 0, 0 0, 100% 100%);
+      border-left: 1px solid var(--r-line);
+      border-bottom: 1px solid var(--r-line);
+    }
+
+    &::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(180deg, transparent 0 3px, var(--r-scanline-2) 3px 4px);
+      pointer-events: none;
+    }
+  }
+
+  &-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--r-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+
+    .glyph { color: var(--r-accent); font-size: 13px; }
+  }
+
+  &-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--r-text);
+    line-height: 1;
+    text-shadow: 0 0 16px var(--r-accent-soft);
+  }
+
+  &-delta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--r-accent);
+    margin-top: 8px;
+
+    &.live {
+      color: var(--r-magenta);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      &::before {
+        content: '';
+        width: 7px; height: 7px;
+        border-radius: 50%;
+        background: var(--r-magenta);
+        box-shadow: 0 0 8px var(--r-magenta);
+        animation: respawn-pulse 1.6s ease-in-out infinite;
+      }
+    }
+  }
+}
+
+@keyframes respawn-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.4; transform: scale(0.85); }
+}
+
+// =============================================================================
+// Header mode toggle (dark / light)
+// =============================================================================
+.RespawnModeToggle {
+  background: transparent;
+  border: 1px solid var(--r-line);
+  color: var(--r-accent);
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  margin: 0 4px;
+  display: inline-grid;
+  place-items: center;
+  font-size: 18px;
+  line-height: 1;
+  font-family: inherit;
+  cursor: pointer;
+  vertical-align: middle;
+  transition: all .15s;
+
+  &:hover {
+    color: var(--r-text);
+    border-color: var(--r-accent);
+    box-shadow: 0 0 0 1px var(--r-accent-soft), 0 0 16px -4px var(--r-accent);
+  }
+
+  &:focus { outline: none; border-color: var(--r-accent); }
+}
+
+// =============================================================================
+// Sidebar widgets — shared panel chrome
+// =============================================================================
+.RespawnPanel {
+  background: var(--r-surface);
+  border: 1px solid var(--r-line);
+  padding: 14px;
+  margin-bottom: 18px;
+  position: relative;
+  overflow: hidden;
+
+  &::before { /* corner notch — top-right */
+    content: '';
+    position: absolute; top: 0; right: 0;
+    width: 14px; height: 14px;
+    background: var(--r-bg);
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+    border-left: 1px solid var(--r-line);
+    border-bottom: 1px solid var(--r-line);
+  }
+
+  &-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--r-muted);
+    margin: 0 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .arrow { color: var(--r-accent); }
+  }
+}
+
+// Player card
+.RespawnPlayerCard {
+  padding: 18px 14px 16px;
+  text-align: center;
+
+  &-avatar {
+    margin: 0 auto 12px;
+    width: 64px;
+    height: 64px;
+
+    .Avatar,
+    img {
+      width: 64px !important;
+      height: 64px !important;
+      clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+      border-radius: 0 !important;
+      display: block;
+    }
+  }
+
+  &-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--r-text);
+    margin-bottom: 4px;
+  }
+
+  &-lvl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--r-accent);
+    text-shadow: 0 0 8px var(--r-accent-soft);
+    margin-bottom: 14px;
+  }
+
+  &-xpBar {
+    background: var(--r-surface-2);
+    border: 1px solid var(--r-line);
+    height: 8px;
+    position: relative;
+    overflow: hidden;
+
+    .fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--r-accent), var(--r-magenta));
+      box-shadow: 0 0 10px var(--r-accent-soft);
+      transition: width .4s ease;
+    }
+  }
+
+  &-xpLabel {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--r-muted);
+    margin-top: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+// Rarity legend
+.RespawnRarityLegend {
+  &-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 8px;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--r-text);
+    }
+
+    .pip {
+      width: 10px;
+      height: 10px;
+      transform: rotate(45deg);
+      flex: 0 0 10px;
+      box-shadow: 0 0 8px currentColor;
+
+      &.legendary { background: var(--r-gold);  color: var(--r-gold); }
+      &.epic      { background: var(--r-epic);  color: var(--r-epic); }
+      &.rare      { background: var(--r-rare);  color: var(--r-rare); }
+      &.common    { background: var(--r-common); color: var(--r-common); box-shadow: none; }
+    }
+  }
+}
+
+// =============================================================================
+// Forms + inputs
+// =============================================================================
+.FormControl {
+  background: var(--r-bg);
+  border: 1px solid var(--r-line);
+  color: var(--r-text);
+  border-radius: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+
+  &:focus {
+    border-color: var(--r-accent);
+    box-shadow: 0 0 0 1px var(--r-accent-soft), 0 0 18px -6px var(--r-accent);
+  }
+}
+
+// =============================================================================
+// Sidebar nav
+// =============================================================================
+.IndexPage-nav .item-newDiscussion .Button--primary,
+.Nav-items .item .Button {
+  border-radius: 0;
+}
+
+.IndexPage-nav .Dropdown-menu,
+.Dropdown-menu {
+  background: var(--r-surface);
+  border: 1px solid var(--r-line);
+  border-radius: 0;
+  box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.5);
+}
+
+// =============================================================================
+// Post stream + individual posts (discussion view)
+// =============================================================================
+
+.PostStream {
+  background: transparent;
+}
+
+.PostStream-item {
+  margin-bottom: 14px;
+}
+
+// Each post becomes a chamfered card matching the rest of the theme
+.Post {
+  background: var(--r-surface);
+  border: 1px solid var(--r-line);
+  padding: 18px 22px;
+  position: relative;
+  transition: border-color .15s, box-shadow .15s;
+
+  &:hover {
+    border-color: var(--r-line);  // stay calm on hover — only highlight on focus
+
+    .Post-actions { opacity: 1; }
+  }
+
+  &.Post--active,
+  &:focus-within {
+    border-color: var(--r-accent);
+    box-shadow: 0 0 0 1px var(--r-accent-soft), 0 0 28px -10px var(--r-accent);
+  }
+}
+
+// Header strip: avatar + username + meta
+.Post-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--r-line);
+}
+
+// Hex-clipped avatar to match user pills + recruit cards
+.PostUser {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .PostUser-avatar,
+  .Avatar {
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+    border-radius: 0 !important;
+    width: 40px;
+    height: 40px;
+  }
+
+  h3, .username {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+
+    a, a:link {
+      color: var(--r-accent);
+      text-shadow: 0 0 12px var(--r-accent-soft);
+
+      &:hover { color: var(--r-text); text-decoration: none; }
+    }
+  }
+}
+
+.PostUser-badges {
+  margin-left: 8px;
+}
+
+// Meta line — number, timestamp, permalink
+.PostMeta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--r-muted);
+  letter-spacing: 0.04em;
+
+  .PostMeta-number {
+    color: var(--r-accent);
+    font-weight: 700;
+    background: var(--r-surface-2);
+    border: 1px solid var(--r-line);
+    padding: 2px 8px;
+    margin-right: 8px;
+    border-radius: 0;
+
+    &::before { content: '#'; opacity: 0.6; }
+  }
+
+  .PostMeta-time,
+  .PostMeta-ip {
+    color: var(--r-muted);
+  }
+
+  .PostMeta-permalink a { color: var(--r-muted); }
+}
+
+// Post body — typography
+.Post-body {
+  color: var(--r-text);
+  font-size: 15px;
+  line-height: 1.6;
+
+  p { margin: 0 0 14px; }
+  p:last-child { margin-bottom: 0; }
+
+  a, a:link {
+    color: var(--r-accent);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--r-accent-soft);
+
+    &:hover {
+      color: var(--r-magenta);
+      border-bottom-color: var(--r-magenta);
+    }
+  }
+
+  code {
+    background: var(--r-bg);
+    border: 1px solid var(--r-line);
+    border-radius: 0;
+    padding: 2px 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9em;
+    color: var(--r-accent);
+  }
+
+  pre {
+    background: var(--r-bg);
+    border: 1px solid var(--r-line);
+    border-radius: 0;
+    padding: 14px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    overflow-x: auto;
+
+    code {
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: var(--r-text);
+    }
+  }
+
+  blockquote {
+    border-left: 3px solid var(--r-accent);
+    background: var(--r-surface-2);
+    padding: 10px 18px;
+    margin: 14px 0;
+    color: var(--r-muted);
+    font-style: normal;
+
+    p:last-child { margin-bottom: 0; }
+  }
+
+  hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--r-line), transparent);
+    margin: 20px 0;
+  }
+
+  ul, ol { padding-left: 22px; }
+  li { margin-bottom: 4px; }
+
+  table {
+    border-collapse: collapse;
+    th, td {
+      border: 1px solid var(--r-line);
+      padding: 8px 12px;
+    }
+    th {
+      background: var(--r-surface-2);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+  }
+}
+
+// Quote-from-other-post styling
+.UserMention,
+.PostMention {
+  background: var(--r-surface-2);
+  border: 1px solid var(--r-line);
+  color: var(--r-accent);
+  padding: 1px 8px;
+  border-radius: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+
+  &::before { content: '@'; opacity: 0.5; }
+}
+
+// Footer: actions + reactions
+.Post-footer,
+.Post-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--r-line);
+}
+
+.Post-actions {
+  opacity: 0.5;
+  transition: opacity .15s;
+
+  .Button {
+    background: transparent;
+    border: 1px solid var(--r-line);
+    color: var(--r-muted);
+    padding: 4px 10px;
+    font-size: 11px;
+
+    &:hover {
+      color: var(--r-accent);
+      border-color: var(--r-accent);
+      background: transparent;
+    }
+
+    &.Button--has-icon .Button-label { letter-spacing: 0.08em; }
+  }
+}
+
+// Like/reaction count
+.PostFooter,
+.Post-footer {
+  ul, li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .item-likes,
+  .item-likedBy {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--r-muted);
+    letter-spacing: 0.04em;
+
+    .fa, .fas, .far {
+      color: var(--r-magenta);
+      margin-right: 6px;
+    }
+  }
+}
+
+// Event posts (renamed, sticky, locked, merged) — quieter style
+.EventPost {
+  background: transparent;
+  border: 1px dashed var(--r-line);
+  padding: 10px 18px;
+  color: var(--r-muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+
+  &:hover { box-shadow: none; }
+
+  .EventPost-icon {
+    color: var(--r-accent);
+    margin-right: 8px;
+  }
+
+  .EventPost-info {
+    a { color: var(--r-accent); }
+  }
+}
+
+// Hidden / render-failed posts
+.Post--hidden,
+.Post--renderFailed {
+  opacity: 0.55;
+  border-style: dashed;
+}
+
+// Reply placeholder (where you click to start a reply at the bottom)
+.ReplyPlaceholder {
+  background: var(--r-surface);
+  border: 1px dashed var(--r-line);
+  padding: 18px 22px;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s;
+
+  &:hover {
+    border-color: var(--r-accent);
+    border-style: solid;
+    box-shadow: 0 0 0 1px var(--r-accent-soft), 0 0 24px -10px var(--r-accent);
+  }
+
+  .PostUser h3 a { color: var(--r-accent); }
+
+  .Post-body { color: var(--r-muted); font-style: normal; }
+}
+
+// Post stream scrubber (the right-side timeline indicator)
+.PostStreamScrubber {
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.04em;
+
+  .Scrubber-bar {
+    background: var(--r-surface-2);
+    border-left: 1px solid var(--r-line);
+  }
+
+  .Scrubber-handle .Scrubber-bar-after {
+    background: linear-gradient(180deg, var(--r-accent), var(--r-magenta));
+    box-shadow: 0 0 8px var(--r-accent-soft);
+  }
+
+  .Scrubber-info strong { color: var(--r-accent); }
+}
+
+// Discussion page hero (title row above the first post)
+.DiscussionPage-stream {
+  margin-top: 18px;
+}
+
+.Hero.DiscussionHero {
+  background: linear-gradient(135deg, var(--r-surface) 0%, var(--r-surface-2) 100%);
+  border: 1px solid var(--r-line);
+  padding: 24px 28px;
+  border-radius: 0;
+
+  .DiscussionHero-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--r-text);
+  }
+}
+
+// Composer (the reply box that slides up from the bottom)
+.Composer {
+  background: var(--r-surface);
+  border-top: 1px solid var(--r-accent);
+  box-shadow: 0 -8px 32px -8px var(--r-accent-soft);
+
+  .Composer-header,
+  .Composer-controls {
+    background: var(--r-surface-2);
+    border-bottom: 1px solid var(--r-line);
+  }
+
+  .TextEditor,
+  textarea {
+    background: var(--r-bg);
+    color: var(--r-text);
+    border: 1px solid var(--r-line);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+}
