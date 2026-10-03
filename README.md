@@ -2,13 +2,18 @@
 
 > **Read-only archive of released versions of ernestdefoe/respawn.** Not for installation: use [Packagist](https://packagist.org/packages/ernestdefoe/respawn) or the [upstream repository](https://github.com/ernestdefoe/respawn).
 
-**0** versions archived · Latest: [`3.0.4`](https://github.com/flarchive/ernestdefoe-respawn/tree/archive/v3.0.4) · License: `MIT` · Flarum: `^2.0`
+**6** versions archived · Latest: [`3.0.4`](https://github.com/flarchive/ernestdefoe-respawn/tree/archive/v3.0.4) · License: `MIT` · Flarum: `^2.0`
 
 ## Archived Versions
 
 | Version | Released | Flarum | Source |
 |---|---|---|---|
-| — | — | — | — |
+| `2.0.0` | 2026-05-20 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-respawn/tree/archive/v2.0.0) |
+| `3.0.0` | 2026-05-26 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-respawn/tree/archive/v3.0.0) |
+| `3.0.1` | 2026-06-08 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-respawn/tree/archive/v3.0.1) |
+| `3.0.2` | 2026-06-21 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-respawn/tree/archive/v3.0.2) |
+| `3.0.4` | 2026-09-11 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-respawn/tree/archive/v3.0.4) |
+| `v3.0.3` | 2026-07-04 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-respawn/tree/archive/v3.0.3) |
 
 Catalog entry: [packages/ernestdefoe-respawn.json](https://github.com/flarchive/archive-index/blob/main/packages/ernestdefoe-respawn.json)
 
